@@ -3,65 +3,45 @@
 #include <string.h>
 #include <time.h>
 
-#define MAXLEN 10
+inline void display_usage( char* argv0 )
+{
+    fprintf( stderr, "\nUsage:\n  %s xdy\n%s", argv0,
+        "Where x is number of dice and y is number of sides on die\n\n");
+}/* End display_usage Func */
 
 int main(int argc, char *argv[])
 {
-     size_t len;
-     char *loc, argxy[MAXLEN+1], xch[MAXLEN], ych[MAXLEN];
-     int i, xin, yin, z =0;
-     int tot =0;
-     
-     srand(time(NULL));
+    char *argxy, *xch, *ych;
+    int xin, yin, z;
+    int tot = 0;
 
-     if( argc != 2 )
-     {
-          /*printf("\nERROR: Wrong number of parameters...");*/
-          printf("\nUsage:\n  %s xdy\n", argv[0]);
-          printf("Where x is number of dice and y is number of sides on die\n\n");
-          return -1;
-     }
+    srand(time(NULL));
 
-     len = strlen(argv[1]);
-     if(len>MAXLEN)
-     {
-          printf("\nERROR: Argument %s is too long.\n\n", argv[1]);
-          return -1;
-     }
-	strcpy(argxy, argv[1]);
+    
+    if( argc < 2 ) display_usage(argv[0]); /* Wrong number of parameters */
+    else {
+        argxy = argv[1];
 
-     loc = strchr(argxy, 'd');
-     if ( loc == NULL ) 
-     {
-          printf("\nERROR: Argument %s does not in expected format.", argv[1]);
-          printf("\nUsage:\n  %s xdy\n", argv[0]);
-          printf("Where x is number of dice and y is number of sides on die\n\n");
-          return -1;
-     }
+        ych = strchr(argxy, 'd');
+        if( ych ) {
+        
+            xch = argxy;
+            *ych++ = '\0';
+            xin = atoi(xch);
+            yin = atoi(ych);
+            
+            for( z = 1; xin > 0; xin-- ) {
+                if(z == 0) printf(" + ");
+                z = (rand() % yin) +1;
+                printf("%d", z);
+                tot += z;
+                z = 0;
+            } printf(" = %d\n", tot);
+            
+         } else {       
+            fprintf(stderr, "\nERROR: Argument %s is not in expected format.", argv[1]);
+            display_usage(argv[0]);
+        }/* End 'd' If-Else */
+    } return tot;	
+}/* End main Func */
 
-     for(i=0; argxy[i] != 'd'; i++)
-     {
-          xch[i] = argxy[i];
-          xch[i+1] = '\0';
-     }
-     xin = atoi(xch);
-
-     for(i +=1; argxy[i] != '\0'; i++, z++)
-     {
-          ych[z] = argxy[i];
-          ych[z+1] = '\0';
-     }
-     yin = atoi(ych);
-
-     for(; xin>0; xin--)
-     {
-          if(i == 0) printf("+");
-          z = (rand() % yin) +1;
-          printf("%d", z);
-          tot += z;
-          i=0;
-     }
-     printf("=%d\n", tot);
-
-     return tot;	
-}
