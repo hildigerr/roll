@@ -1,19 +1,13 @@
 CC = gcc
 CFLAGS = -Wall
 
-roll: diceroller.o
-	${CC} -g -o ${@} diceroller.o
+roll: diceroller.c
+	${CC} ${CFLAGS} -o ${@} diceroller.c
 
 man:
 	gzip -c roll.6 > roll.6.gz
 
 all: roll man
 
-clean:
-	rm diceroller.o
-
-install: roll man
-	@ mv roll /usr/games/ ; mv roll.6.gz /usr/share/man/man6/
-
-uninstall:
-	@ rm /usr/games/roll ; rm /usr/share/man/man6/roll.6.gz
+install: all
+	@ mv roll ${DESTDIR}/usr/games/ ; mv roll.6.gz ${DESTDIR}/usr/share/man/man6/
